@@ -12,14 +12,6 @@ def generate_three_battle(now, count):
             count[i] += 1
 
 
-def generate_error(three_score):
-    average = sum(three_score) / 3.0
-    error = 0
-    for score in three_score:
-        error += (average - score) ** 2
-    return error
-
-
 def compete(A, B):
     count = 0
     for i in range(3):
@@ -34,6 +26,7 @@ def main():
     t = int(raw_input())
 
     generate_three_battle([], [3, 3, 3])
+    # print(len(three_battle))
 
     for t in range(t):
         # Read n, k
@@ -41,33 +34,24 @@ def main():
         A = [int(s) for s in raw_input().split(" ")]
         B = [int(s) for s in raw_input().split(" ")]
 
-        min_error = 999999999999999
-        best_policy = None
-        best_three_score = None
-        for policy in three_battle:
-            three_score = [0, 0, 0]
-            for i in range(len(policy)):
-                three_score[policy[i]] += A[i]
-            error = generate_error(three_score)
-            if error < min_error:
-                min_error = error
-                best_policy = policy
-                best_three_score = three_score
+        best = 0
+        for policyA in three_battle:
+            three_score_A = [0, 0, 0]
+            for i in range(len(policyA)):
+                three_score_A[policyA[i]] += A[i]
+            count = 0.0
+            win = 0.0
+            for policyB in three_battle:
+                three_score_B = [0, 0, 0]
+                for i in range(len(policyB)):
+                    three_score_B[policyB[i]] += B[i]
+                count += 1
+                if compete(three_score_B, three_score_A):
+                    win += 1
+            if win / count > best:
+                best = win / count
 
-        # print(best_three_score)
-        count = 0.0
-        win = 0.0
-
-        for policy in three_battle:
-            count += 1
-            three_score = [0, 0, 0]
-            for i in range(len(policy)):
-                three_score[policy[i]] += B[i]
-            # print(policy, three_score)
-            if compete(three_score, best_three_score):
-                # print(policy,three_score,best_three_score)
-                win += 1
-        print("Case #%s: %.9f" % (t + 1, win / count))
+        print("Case #%s: %.9f" % (t + 1, best))
 
 
 if __name__ == '__main__':
